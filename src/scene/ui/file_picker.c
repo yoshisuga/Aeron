@@ -9,6 +9,13 @@
 #include <windows.h>
 #endif
 
+/* An iOS app sees only its container; the user's files go in Documents. */
+#ifdef SDL_PLATFORM_IOS
+#define PICKER_START_FOLDER SDL_FOLDER_DOCUMENTS
+#else
+#define PICKER_START_FOLDER SDL_FOLDER_HOME
+#endif
+
 #define PICKER_MAX_WIDTH_REF 1120.0f
 #define PICKER_SIDEBAR_WIDTH_REF 230.0f
 #define PICKER_DESIRED_VISIBLE_ROWS 16.0f
@@ -500,7 +507,7 @@ int AeronUiFilePicker_Open(AeronUiFilePicker* picker, const AeronUiFilePickerDes
 	}
 	const char* initial    = desc->initial_path && desc->initial_path[0] ? desc->initial_path
 							 : picker->last_parent_path[0]               ? picker->last_parent_path
-																		 : SDL_GetUserFolder(SDL_FOLDER_HOME);
+																		 : SDL_GetUserFolder(PICKER_START_FOLDER);
 	char*       normalized = picker_path_normalize(initial ? initial : ".", NULL);
 	if (!normalized || strlen(normalized) >= sizeof picker->location_text) {
 		SDL_free(normalized);

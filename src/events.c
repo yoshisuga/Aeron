@@ -35,6 +35,15 @@ static int Aeron_UpdateRawMouseFromPlatform(AeronInputSnapshot* input) {
 	int   window_x;
 	int   window_y;
 
+#ifdef SDL_PLATFORM_IOS
+	/* iOS has no global pointer; touches and trackpads report their
+	 * position only through events, which already set raw_x/raw_y. */
+	(void)global_x;
+	(void)global_y;
+	(void)window_x;
+	(void)window_y;
+	return input->window_width > 0;
+#endif
 	SDL_GetGlobalMouseState(&global_x, &global_y);
 	if (!SDL_GetWindowPosition(g_aeron.window, &window_x, &window_y)) {
 		return 0;
